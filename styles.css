@@ -115,3 +115,13 @@ footer a {
   .cards { grid-template-columns: 1fr 1fr 1fr; }
   .wrap { padding: 48px 32px 80px; }
 }
+.map + p a {
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14.5px;
+  text-decoration: none;
+}
+.map + p a:hover {
+  text-decoration: underline;
+}
+
