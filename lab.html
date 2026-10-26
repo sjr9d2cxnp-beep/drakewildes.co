@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connected Ops Lab</title>
+<style>
+  :root {
+    --green: #1B4332;
+    --cream: #F8F4E9;
+    --text: #1a1a1a;
+    --muted: #5c5c5c;
+    --border: #e0dcd0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; color: var(--green); }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: 15px; }
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 { font-size: 16px; margin: 0 0 12px; color: var(--green); }
+  .row { display: flex; justify-content: space-between; margin: 6px 0; font-size: 15px; }
+  .label { color: var(--muted); }
+  .value { font-weight: 600; }
+  .risk { font-size: 18px; font-weight: 700; }
+  .risk.low { color: #2d6a4f; }
+  .risk.med { color: #b08900; }
+  .risk.high { color: #9b2226; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button:active { opacity: 0.85; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Connected Ops Lab</h1>
+  <p class="sub">Simulated telemetry → validation → risk → impact</p>
+
+  <div class="card">
+    <h2>Telemetry</h2>
+    <div class="row"><span class="label">Unit</span><span class="value" id="unit">unit_1</span></div>
+    <div class="row"><span class="label">Coolant</span><span class="value" id="coolant">—</span></div>
+    <div class="row"><span class="label">RPM</span><span class="value" id="rpm">—</span></div>
+    <div class="row"><span class="label">Speed</span><span class="value" id="speed">—</span></div>
+    <div class="row"><span class="label">Vibration</span><span class="value" id="vib">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Validation</h2>
+    <div class="row"><span class="label">Status</span><span class="value" id="validation">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Risk</h2>
+    <div class="risk" id="risk">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Impact</h2>
+    <div class="row"><span class="label">Early action</span><span class="value" id="early">—</span></div>
+    <div class="row"><span class="label">Deferred</span><span class="value" id="deferred">—</span></div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="anomaly('coolant')">Coolant spike</button>
+    <button onclick="anomaly('vib')">Vibration spike</button>
+    <button onclick="anomaly('speed')">Speed anomaly</button>
+    <button onclick="reset()">Reset</button>
+  </div>
+
+  <p class="note">Personal browser demo. Simulated data only. Original lab: <a href="https://github.com/sjr9d2cxnp-beep/connected-ops-lab">GitHub</a></p>
+</div>
+
+<script>
+let state = { coolant: 192, rpm: 2350, speed: 68, vib: 0.9, anomaly: null };
+
+function update() {
+  if (!state.anomaly) {
+    state.coolant += (Math.random() - 0.5) * 1.5;
+    state.rpm += (Math.random() - 0.5) * 40;
+    state.speed += (Math.random() - 0.5) * 0.8;
+    state.vib += (Math.random() - 0.5) * 0.08;
+    state.coolant = Math.max(185, Math.min(205, state.coolant));
+    state.rpm = Math.max(2000, Math.min(2700, state.rpm));
+    state.speed = Math.max(60, Math.min(75, state.speed));
+    state.vib = Math.max(0.4, Math.min(1.6, state.vib));
+  }
+
+  document.getElementById('coolant').textContent = state.coolant.toFixed(1) + '°F';
+  document.getElementById('rpm').textContent = Math.round(state.rpm);
+  document.getElementById('speed').textContent = state.speed.toFixed(1) + ' mph';
+  document.getElementById('vib').textContent = state.vib.toFixed(2);
+
+  let valid = 'OK';
+  if (state.coolant > 220 || state.vib > 2.5 || state.speed > 80) valid = 'Out of range';
+  document.getElementById('validation').textContent = valid;
+
+  let risk = 'Low';
+  let riskClass = 'low';
+  if (state.coolant > 210 || state.vib > 2.0 || state.speed > 78) { risk = 'Medium'; riskClass = 'med'; }
+  if (state.coolant > 225 || state.vib > 2.6 || state.speed > 82) { risk = 'High'; riskClass = 'high'; }
+  const riskEl = document.getElementById('risk');
+  riskEl.textContent = risk;
+  riskEl.className = 'risk ' + riskClass;
+
+  let early = '$1,200 / 4 hrs';
+  let deferred = '$3,500 / 12 hrs';
+  if (state.anomaly === 'vib') { early = '$900 / 3 hrs'; deferred = '$2,800 / 10 hrs'; }
+  if (state.anomaly === 'speed') { early = '$150 / 0.5 hrs'; deferred = '$1,500 / 4 hrs'; }
+  document.getElementById('early').textContent = early;
+  document.getElementById('deferred').textContent = deferred;
+}
+
+function anomaly(type) {
+  state.anomaly = type;
+  if (type === 'coolant') state.coolant = 235;
+  if (type === 'vib') state.vib = 3.1;
+  if (type === 'speed') state.speed = 84;
+  update();
+  setTimeout(() => { state.anomaly = null; }, 8000);
+}
+
+function reset() {
+  state = { coolant: 192, rpm: 2350, speed: 68, vib: 0.9, anomaly: null };
+  update();
+}
+
+setInterval(update, 1500);
+update();
+</script>
+</body>
+</html>
