@@ -14,24 +14,18 @@ body {
   line-height: 1.5;
   font-size: 16.5px;
 }
-/* Reset all links */
 a, a:link, a:visited {
   color: var(--green);
   text-decoration: none;
   border-bottom: none;
 }
 a:hover { color: var(--gold); }
-/* Text links with arrow */
 .text-link, .text-link:link, .text-link:visited {
   color: var(--green);
   font-weight: 700;
   text-decoration: none;
 }
 .text-link:hover { color: var(--gold); }
-.text-link::after {
-  content: " \2192";
-  font-weight: 700;
-}
 nav {
   position: sticky;
   top: 0;
