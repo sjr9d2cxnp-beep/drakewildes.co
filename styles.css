@@ -44,7 +44,7 @@ h1 {
   font-size: 18px;
   color: var(--muted);
   margin-bottom: 40px;
-  max-width: 540px;
+  max-width: 560px;
 }
 section { margin-bottom: 42px; }
 h2 {
@@ -56,6 +56,11 @@ h2 {
   padding-bottom: 6px;
   border-bottom: 1px solid var(--gold);
   font-weight: 600;
+}
+.intro {
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-size: 15.5px;
 }
 .step {
   margin-bottom: 18px;
@@ -94,9 +99,17 @@ h2 {
   text-decoration: none;
 }
 .card a:hover { text-decoration: underline; }
+.steps-compact {
+  display: grid;
+  gap: 12px;
+  font-size: 15.5px;
+}
+.steps-compact strong {
+  color: var(--green);
+}
 .cdl {
-  margin-top: 28px;
-  font-size: 15px;
+  margin-top: 8px;
+  font-size: 15.5px;
   color: var(--muted);
 }
 footer {
@@ -115,13 +128,12 @@ footer a {
   .cards { grid-template-columns: 1fr 1fr 1fr; }
   .wrap { padding: 48px 32px 80px; }
 }
-.map + p a {
+.map + p a, section p a {
   color: var(--green);
   font-weight: 600;
   font-size: 14.5px;
   text-decoration: none;
 }
-.map + p a:hover {
+.map + p a:hover, section p a:hover {
   text-decoration: underline;
 }
-
